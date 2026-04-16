@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>업무 프로세스 - 5단계</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-glass: rgba(255, 255, 255, 0.7);
+            --text-primary: #1a1a2e;
+            --text-secondary: #666666;
+            --border-color: rgba(200, 200, 220, 0.3);
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        html.dark {
+            --bg-primary: #0f0f23;
+            --bg-glass: rgba(30, 30, 60, 0.6);
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --border-color: rgba(100, 100, 150, 0.2);
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+            padding: 70px 20px 40px 20px;
+            color: var(--text-primary);
+            transition: background 0.6s ease, color 0.3s ease;
+            min-height: 100vh;
+        }
+
+        html.dark body {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a4a 50%, #0f1f3a 100%);
+        }
+
+        /* ===== 네비게이션 메뉴 ===== */
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            gap: 8px;
+            background: var(--bg-glass);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 20px;
+            backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+            z-index: 1000;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        html.dark .nav-menu {
+            background: rgba(30, 30, 60, 0.6);
+        }
+
+        .nav-item {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-secondary);
+            background: transparent;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .nav-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        html.dark .nav-item:hover {
+            background: rgba(167, 139, 250, 0.1);
+        }
+
+        html.dark .nav-item.active {
+            background: linear-gradient(135deg, #a78bfa 0%, #c084fc 100%);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        html.dark h1 {
+            background: linear-gradient(135deg, #a78bfa 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* SVG 컨테이너 */
+        .diagram-container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        html.dark .diagram-container {
+            background: rgba(30, 30, 60, 0.4);
+            border: 1px solid var(--border-color);
+        }
+
+        svg {
+            max-width: 100%;
+            height: auto;
+            display: inline-block;
+        }
+
+        /* 설명 섹션 */
+        .description {
+            margin-top: 40px;
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        html.dark .description {
+            background: rgba(30, 30, 60, 0.4);
+            border: 1px solid var(--border-color);
+        }
+
+        .description h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .step-box {
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .step-box.step-1 {
+            background: linear-gradient(135deg, #FFE5E5 0%, #FFCCCC 100%);
+            color: #C41C3B;
+        }
+
+        .step-box.step-2 {
+            background: linear-gradient(135deg, #E5F4FF 0%, #CCEBFF 100%);
+            color: #0056B3;
+        }
+
+        .step-box.step-3 {
+            background: linear-gradient(135deg, #E5F9FF 0%, #CCEFFF 100%);
+            color: #0077B6;
+        }
+
+        .step-box.step-4 {
+            background: linear-gradient(135deg, #E8F5E9 0%, #D4EDDA 100%);
+            color: #2E7D32;
+        }
+
+        .step-box.step-5 {
+            background: linear-gradient(135deg, #F3E5F5 0%, #E1CFEA 100%);
+            color: #7B1FA2;
+        }
+
+        .step-box strong {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        /* 테마 토글 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        html.dark .theme-toggle {
+            background: #1a1a3a;
+            border-color: rgba(100, 100, 150, 0.3);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            body {
+                padding: 70px 15px 30px 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .diagram-container {
+                padding: 20px;
+            }
+
+            .description {
+                padding: 20px;
+            }
+
+            .steps-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .nav-item {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 메뉴 -->
+    <nav class="nav-menu">
+        <a href="dashboard.html" class="nav-item" data-page="dashboard">📊 대시보드</a>
+        <a href="meeting-result.html" class="nav-item" data-page="meeting">📋 회의록</a>
+        <a href="chart.html" class="nav-item" data-page="chart">📈 매출 현황</a>
+        <a href="diagram.html" class="nav-item" data-page="diagram">🔄 업무 프로세스</a>
+        <a href="report.html" class="nav-item" data-page="report">📑 사이트 분석</a>
+        <a href="spreadsheet-report.html" class="nav-item" data-page="spreadsheet">📊 판매 데이터</a>
+    </nav>
+
+    <div class="container">
+        <!-- 헤더 -->
+        <header>
+            <h1>🔄 콘텐츠 제작 업무 프로세스</h1>
+            <p class="subtitle">5단계 워크플로우 시각화</p>
+        </header>
+
+        <!-- 다이어그램 -->
+        <div class="diagram-container">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" width="800" height="200">
+                <defs>
+                    <!-- 화살표 마커 -->
+                    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" fill="#ccc" />
+                    </marker>
+
+                    <!-- 그림자 효과 -->
+                    <filter id="shadow">
+                        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15" />
+                    </filter>
+
+                    <!-- 그라디언트 정의 -->
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#FFE5E5;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#FFCCCC;stop-opacity:1" />
+                    </linearGradient>
+
+                    <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#E5F4FF;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#CCEBFF;stop-opacity:1" />
+                    </linearGradient>
+
+                    <linearGradient id="grad3" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#E5F9FF;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#CCEFFF;stop-opacity:1" />
+                    </linearGradient>
+
+                    <linearGradient id="grad4" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#E8F5E9;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#D4EDDA;stop-opacity:1" />
+                    </linearGradient>
+
+                    <linearGradient id="grad5" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#F3E5F5;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#E1CFEA;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+
+                <!-- 배경 -->
+                <rect width="800" height="200" fill="#fafbfc" rx="4" />
+
+                <!-- 화살표 라인 -->
+                <line x1="150" y1="100" x2="165" y2="100" stroke="#ddd" stroke-width="2" marker-end="url(#arrowhead)" />
+                <line x1="305" y1="100" x2="320" y2="100" stroke="#ddd" stroke-width="2" marker-end="url(#arrowhead)" />
+                <line x1="460" y1="100" x2="475" y2="100" stroke="#ddd" stroke-width="2" marker-end="url(#arrowhead)" />
+                <line x1="615" y1="100" x2="630" y2="100" stroke="#ddd" stroke-width="2" marker-end="url(#arrowhead)" />
+
+                <!-- 단계 1: 기획 -->
+                <g filter="url(#shadow)">
+                    <rect x="10" y="50" width="140" height="100" rx="12" ry="12" fill="url(#grad1)" stroke="#FFB3B3" stroke-width="2" />
+                    <text x="80" y="88" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#C41C3B">📋</text>
+                    <text x="80" y="108" font-family="Arial, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#C41C3B">기획</text>
+                    <text x="80" y="123" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">개념 구성</text>
+                </g>
+
+                <!-- 단계 2: 제작 -->
+                <g filter="url(#shadow)">
+                    <rect x="165" y="50" width="140" height="100" rx="12" ry="12" fill="url(#grad2)" stroke="#99D4FF" stroke-width="2" />
+                    <text x="235" y="88" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#0056B3">🛠️</text>
+                    <text x="235" y="108" font-family="Arial, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#0056B3">제작</text>
+                    <text x="235" y="123" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">콘텐츠 생성</text>
+                </g>
+
+                <!-- 단계 3: 검토 -->
+                <g filter="url(#shadow)">
+                    <rect x="320" y="50" width="140" height="100" rx="12" ry="12" fill="url(#grad3)" stroke="#99E3FF" stroke-width="2" />
+                    <text x="390" y="88" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#0077B6">✓</text>
+                    <text x="390" y="108" font-family="Arial, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#0077B6">검토</text>
+                    <text x="390" y="123" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">품질 점검</text>
+                </g>
+
+                <!-- 단계 4: 배포 -->
+                <g filter="url(#shadow)">
+                    <rect x="475" y="50" width="140" height="100" rx="12" ry="12" fill="url(#grad4)" stroke="#81C784" stroke-width="2" />
+                    <text x="545" y="88" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#2E7D32">🚀</text>
+                    <text x="545" y="108" font-family="Arial, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#2E7D32">배포</text>
+                    <text x="545" y="123" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">라이브 출시</text>
+                </g>
+
+                <!-- 단계 5: 분석 -->
+                <g filter="url(#shadow)">
+                    <rect x="630" y="50" width="140" height="100" rx="12" ry="12" fill="url(#grad5)" stroke="#CE93D8" stroke-width="2" />
+                    <text x="700" y="88" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#7B1FA2">📊</text>
+                    <text x="700" y="108" font-family="Arial, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#7B1FA2">분석</text>
+                    <text x="700" y="123" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">성과 측정</text>
+                </g>
+
+                <!-- 상단 타이틀 -->
+                <text x="400" y="25" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#333">콘텐츠 제작 프로세스</text>
+            </svg>
+        </div>
+
+        <!-- 단계별 설명 -->
+        <div class="description">
+            <h2>📋 단계별 업무 설명</h2>
+            <div class="steps-grid">
+                <div class="step-box step-1">
+                    <strong>1️⃣ 기획</strong>
+                    <p>프로젝트의 개념을 정의하고 목표와 방향성을 수립하는 단계</p>
+                </div>
+                <div class="step-box step-2">
+                    <strong>2️⃣ 제작</strong>
+                    <p>기획된 내용을 바탕으로 콘텐츠를 실제로 제작하고 구현하는 단계</p>
+                </div>
+                <div class="step-box step-3">
+                    <strong>3️⃣ 검토</strong>
+                    <p>완성된 콘텐츠의 품질을 점검하고 피드백을 반영하는 단계</p>
+                </div>
+                <div class="step-box step-4">
+                    <strong>4️⃣ 배포</strong>
+                    <p>검수를 완료한 콘텐츠를 실제로 공개하고 출시하는 단계</p>
+                </div>
+                <div class="step-box step-5">
+                    <strong>5️⃣ 분석</strong>
+                    <p>배포 후 성과를 측정하고 개선사항을 파악하는 단계</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 테마 토글 -->
+    <div class="theme-toggle" id="themeToggle" title="다크/라이트 모드 전환">
+        <span id="themeIcon">🌙</span>
+    </div>
+
+    <script>
+        // ===== 네비게이션 활성화 =====
+        function updateActiveNav() {
+            const currentPage = window.location.pathname.split('/').pop() || 'diagram.html';
+            const navItems = document.querySelectorAll('.nav-item');
+
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                const href = item.getAttribute('href');
+                if (href === currentPage) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // 초기화 시 현재 페이지 표시
+        updateActiveNav();
+
+        // ===== 다크/라이트 모드 토글 =====
+        const htmlElement = document.documentElement;
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+
+        // localStorage에서 저장된 테마 불러오기
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                htmlElement.classList.add('dark');
+                themeIcon.textContent = '☀️';
+            } else {
+                htmlElement.classList.remove('dark');
+                themeIcon.textContent = '🌙';
+            }
+        }
+
+        // 테마 토글
+        themeToggle.addEventListener('click', () => {
+            const isDark = htmlElement.classList.contains('dark');
+            if (isDark) {
+                htmlElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                themeIcon.textContent = '🌙';
+            } else {
+                htmlElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                themeIcon.textContent = '☀️';
+            }
+        });
+
+        // 초기화
+        loadTheme();
+    </script>
+</body>
+</html>

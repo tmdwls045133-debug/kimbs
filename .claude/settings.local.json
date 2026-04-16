@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.subtrac.kr)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(where python:*)",
+      "Read(//tmp/**)",
+      "Read(//c/tmp/today-todo-skill/**)",
+      "Bash(python scripts/parse_todos.py \"C:\\\\Users\\\\user\\\\Desktop\\\\워크숍-실습\\\\dashboard.html\")",
+      "Bash(python3 /tmp/today-todo-skill/scripts/parse_todos.py '/mnt/c/Users/user/Desktop/워크숍-실습/dashboard.html')",
+      "Bash(python scripts/parse_todos.py dashboard.html)",
+      "Bash(python3 scripts/parse_todos.py \"C:\\\\Users\\\\user\\\\Desktop\\\\워크숍-실습\\\\dashboard.html\")",
+      "Bash(python3 /tmp/today-todo-skill/scripts/parse_todos.py dashboard.html)",
+      "Bash(python3 -m py_compile /tmp/today-todo-skill/scripts/parse_todos.py)",
+      "Bash(python3)",
+      "WebFetch(domain:docs.google.com)",
+      "WebFetch(domain:doc-04-24-sheets.googleusercontent.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(ls -d */)"
+    ]
+  }
+}

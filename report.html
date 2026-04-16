@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SubTrackr 웹사이트 분석 보고서</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px 20px 40px 20px;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* ===== 네비게이션 메뉴 ===== */
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            gap: 8px;
+            background: white;
+            border-bottom: 1px solid #ddd;
+            padding: 12px 20px;
+            flex-wrap: wrap;
+            z-index: 1000;
+            justify-content: center;
+        }
+
+        body {
+            padding-top: 70px;
+        }
+
+        .nav-item {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            color: #666;
+            background: transparent;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #333;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* ===== 헤더 ===== */
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .date {
+            font-size: 13px;
+            color: #999;
+        }
+
+        /* ===== 메인 콘텐츠 ===== */
+        .content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        /* ===== 카드 스타일 ===== */
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .card h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card h2::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        /* ===== 섹션별 스타일 ===== */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .overview-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .overview-label {
+            font-size: 12px;
+            font-weight: 700;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .overview-value {
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        /* ===== 구조 섹션 ===== */
+        .structure-item {
+            background: #f9f9f9;
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border-left: 3px solid #667eea;
+        }
+
+        .structure-item strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .structure-item p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* ===== 기능 목록 ===== */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .feature-box {
+            background: linear-gradient(135deg, #f0f4ff 0%, #f9f9fb 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .feature-box h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .feature-box p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* ===== 디자인 분석 ===== */
+        .design-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .design-item {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .design-item h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .color-swatch {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .design-item p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* ===== 장점/개선점 ===== */
+        .pros-cons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .pros-box, .cons-box {
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .pros-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+
+        .cons-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+        }
+
+        .pros-box h3, .cons-box h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .pros-box h3 {
+            color: #2e7d32;
+        }
+
+        .cons-box h3 {
+            color: #e65100;
+        }
+
+        .pros-cons-list {
+            list-style: none;
+        }
+
+        .pros-cons-list li {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 10px;
+            padding-left: 24px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .pros-cons-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .pros-cons-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .cons-box .pros-cons-list li::before {
+            content: '→';
+        }
+
+        /* ===== 기술 스택 ===== */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .tech-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* ===== 푸터 ===== */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+            font-size: 12px;
+            border-top: 1px solid #e0e0e0;
+            margin-top: 50px;
+        }
+
+        /* ===== 인쇄 스타일 ===== */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .card {
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #e0e0e0;
+            }
+        }
+
+        /* ===== 반응형 ===== */
+        @media (max-width: 768px) {
+            header {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .design-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pros-cons-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 메뉴 -->
+    <nav class="nav-menu">
+        <a href="dashboard.html" class="nav-item" data-page="dashboard">📊 대시보드</a>
+        <a href="meeting-result.html" class="nav-item" data-page="meeting">📋 회의록</a>
+        <a href="chart.html" class="nav-item" data-page="chart">📈 매출 현황</a>
+        <a href="diagram.html" class="nav-item" data-page="diagram">🔄 업무 프로세스</a>
+        <a href="report.html" class="nav-item active" data-page="report">📑 사이트 분석</a>
+        <a href="spreadsheet-report.html" class="nav-item" data-page="spreadsheet">📊 판매 데이터</a>
+    </nav>
+
+    <div class="container">
+        <!-- 헤더 -->
+        <header>
+            <h1>📊 SubTrackr 웹사이트 분석 보고서</h1>
+            <p class="subtitle">구독료 추적 및 관리 AI 플랫폼</p>
+            <p class="date">분석 날짜: 2026년 4월 9일</p>
+        </header>
+
+        <div class="content">
+            <!-- 1. 사이트 개요 -->
+            <div class="card">
+                <h2>🌐 사이트 개요</h2>
+                <p style="margin-bottom: 20px; color: #555; line-height: 1.8;">
+                    SubTrackr는 AI 기반 스크린샷 감지 기술을 활용하여 은행 로그인 없이 구독료를 추적하고 관리할 수 있는 혁신적인 금융 웹 애플리케이션입니다. 120개 이상의 글로벌 서비스를 지원하며, 11개 언어로 다국어 인터페이스를 제공합니다.
+                </p>
+                <div class="overview-grid">
+                    <div class="overview-item">
+                        <div class="overview-label">지원 서비스</div>
+                        <div class="overview-value">120+</div>
+                    </div>
+                    <div class="overview-item">
+                        <div class="overview-label">지원 언어</div>
+                        <div class="overview-value">11</div>
+                    </div>
+                    <div class="overview-item">
+                        <div class="overview-label">프레임워크</div>
+                        <div class="overview-value">Next.js</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 사이트 구조 -->
+            <div class="card">
+                <h2>🏗️ 사이트 구조 & 기술 스택</h2>
+
+                <h3 style="margin-top: 20px; margin-bottom: 12px; font-size: 15px; color: #667eea; font-weight: 700;">아키텍처</h3>
+                <div class="structure-item">
+                    <strong>Next.js 기반 현대식 웹 애플리케이션</strong>
+                    <p>서버 사이드 렌더링(SSR)과 병렬 라우팅을 활용하여 빠른 로딩 속도와 SEO 최적화를 동시에 구현</p>
+                </div>
+
+                <div class="structure-item">
+                    <strong>다국어 지원 시스템</strong>
+                    <p>한국어, 영어, 일본어, 중국어, 스페인어, 포르투갈어, 독일어, 프랑스어, 힌디어, 아랍어, 베트남어 자동 감지</p>
+                </div>
+
+                <div class="structure-item">
+                    <strong>테마 시스템</strong>
+                    <p>라이트/다크 모드 지원으로 사용자 선호도에 맞는 인터페이스 제공</p>
+                </div>
+
+                <h3 style="margin-top: 20px; margin-bottom: 12px; font-size: 15px; color: #667eea; font-weight: 700;">기술 스택</h3>
+                <div class="tech-stack">
+                    <span class="tech-badge">Next.js</span>
+                    <span class="tech-badge">React</span>
+                    <span class="tech-badge">CSS 모듈</span>
+                    <span class="tech-badge">WOFF2 웹폰트</span>
+                    <span class="tech-badge">PWA</span>
+                    <span class="tech-badge">SEO 마크업</span>
+                </div>
+            </div>
+
+            <!-- 3. 주요 기능 -->
+            <div class="card">
+                <h2>✨ 주요 기능</h2>
+                <div class="feature-grid">
+                    <div class="feature-box">
+                        <h3>🤖 AI 스크린샷 감지</h3>
+                        <p>은행 로그인 없이 스크린샷만으로 자동으로 구독료를 인식하고 분류. 사용자의 금융 정보 보호</p>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>📱 다중 서비스 지원</h3>
+                        <p>Netflix, Spotify, Adobe, Microsoft 등 120개 이상의 주요 구독 서비스 자동 인식 및 추적</p>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>🌍 다국어 인터페이스</h3>
+                        <p>11개 언어 지원으로 전 세계 사용자가 자신의 언어로 쉽게 사용 가능</p>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>🎨 테마 시스템</h3>
+                        <p>라이트/다크 모드로 사용자의 선호도와 환경에 맞는 최적의 시각 경험 제공</p>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>📊 실시간 추적</h3>
+                        <p>구독료 변화를 실시간으로 모니터링하고 예상 비용 계산</p>
+                    </div>
+
+                    <div class="feature-box">
+                        <h3>🔐 보안 우선</h3>
+                        <p>스크린샷 분석 기반으로 직접 금융 정보 저장 없이 안전하게 관리</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. 디자인 분석 -->
+            <div class="card">
+                <h2>🎨 디자인 분석</h2>
+                <div class="design-grid">
+                    <div class="design-item">
+                        <h3>
+                            <span class="color-swatch" style="background: #414042;"></span>
+                            주요 색상
+                        </h3>
+                        <p><strong>#414042</strong> (진회색)<br/>모던하고 신뢰감 있는 인상을 전달하는 주요 브랜드 색상</p>
+                    </div>
+
+                    <div class="design-item">
+                        <h3>
+                            <span class="color-swatch" style="background: #f5f5f5;"></span>
+                            배경색
+                        </h3>
+                        <p><strong>#f5f5f5</strong> (라이트 그레이)<br/>눈의 피로를 줄이고 콘텐츠를 명확하게 돋보이게 함</p>
+                    </div>
+
+                    <div class="design-item">
+                        <h3>📝 타이포그래피</h3>
+                        <p><strong>Nunito 폰트</strong><br/>산세리프 계열의 현대적이고 가독성 높은 글꼴 사용</p>
+                    </div>
+
+                    <div class="design-item">
+                        <h3>📱 반응형 디자인</h3>
+                        <p><strong>모바일 우선 접근</strong><br/>device-width 기반 반응형 레이아웃으로 모든 기기 최적화</p>
+                    </div>
+
+                    <div class="design-item">
+                        <h3>✨ 렌더링 최적화</h3>
+                        <p><strong>Antialiased 처리</strong><br/>매끄러운 텍스트와 엣지 렌더링으로 고급 시각 경험</p>
+                    </div>
+
+                    <div class="design-item">
+                        <h3>🔍 SEO 최적화</h3>
+                        <p><strong>스키마 마크업</strong><br/>검색엔진과 소셜 미디어 최적화 완료</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. 잘한 점 vs 개선점 -->
+            <div class="card">
+                <h2>✅ 잘한 점 & 개선 제안</h2>
+                <div class="pros-cons-grid">
+                    <div class="pros-box">
+                        <h3>✓ 잘한 점</h3>
+                        <ul class="pros-cons-list">
+                            <li>AI 기반 혁신적인 기술로 차별성 확보</li>
+                            <li>11개 언어 지원으로 글로벌 접근성 확대</li>
+                            <li>Next.js 기반 성능 최적화된 아키텍처</li>
+                            <li>직관적인 UI/UX 설계</li>
+                            <li>모바일 완전 대응 반응형 디자인</li>
+                            <li>강력한 보안 개인정보 보호</li>
+                            <li>PWA 지원으로 오프라인 접근 가능</li>
+                            <li>SEO 마크업 및 메타데이터 완벽 구성</li>
+                        </ul>
+                    </div>
+
+                    <div class="cons-box">
+                        <h3>→ 개선 제안</h3>
+                        <ul class="pros-cons-list">
+                            <li>추가 시각적 요소(그래프, 차트)로 데이터 시각화 강화</li>
+                            <li>다크 모드 가시성 개선 및 색상 대비 향상</li>
+                            <li>페이지 로딩 속도 메트릭스 공개로 신뢰도 증대</li>
+                            <li>WCAG 접근성 가이드라인 전면 검토</li>
+                            <li>사용자 온보딩 튜토리얼 추가</li>
+                            <li>국제화 검색 결과 최적화 강화</li>
+                            <li>소셜 로그인 옵션 추가 검토</li>
+                            <li>실시간 구독료 비교 대시보드 확대</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. 결론 -->
+            <div class="card">
+                <h2>📋 종합 평가</h2>
+                <p style="margin-bottom: 15px; color: #555; line-height: 1.8;">
+                    <strong>SubTrackr</strong>는 구독료 관리라는 실질적인 문제를 AI 기술로 창의적으로 해결한 웹 애플리케이션입니다.
+                    Next.js 기반의 안정적인 기술 스택과 11개 언어 지원으로 글로벌 확장성이 우수합니다.
+                </p>
+                <p style="margin-bottom: 15px; color: #555; line-height: 1.8;">
+                    <strong>강점:</strong> 혁신적인 AI 기술, 뛰어난 보안, 글로벌 다국어 지원, 모바일 최적화
+                </p>
+                <p style="color: #555; line-height: 1.8;">
+                    <strong>발전 방향:</strong> 시각적 데이터 표현 강화, 접근성 개선, 사용자 경험 고도화를 통해 더욱 완성도 높은 플랫폼으로 발전할 수 있을 것으로 기대됩니다.
+                </p>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <footer>
+            <p>SubTrackr 웹사이트 분석 보고서 | 작성일: 2026년 4월 9일</p>
+            <p style="margin-top: 10px;">© 2026 Kim Secretary Analysis. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>판매 데이터 분석 보고서</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fb;
+            --bg-glass: rgba(255, 255, 255, 0.7);
+            --text-primary: #1a1a2e;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --border-color: rgba(200, 200, 220, 0.3);
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        html.dark {
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1a3a;
+            --bg-glass: rgba(30, 30, 60, 0.6);
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-light: #808080;
+            --border-color: rgba(100, 100, 150, 0.2);
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+            padding: 20px;
+            padding-top: 90px;
+            color: var(--text-primary);
+            transition: background 0.6s ease, color 0.3s ease;
+            min-height: 100vh;
+        }
+
+        html.dark body {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a4a 50%, #0f1f3a 100%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 30px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        /* ===== 네비게이션 메뉴 ===== */
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            gap: 8px;
+            background: var(--bg-glass);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 20px;
+            backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+            z-index: 1000;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-item {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-secondary);
+            background: transparent;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        html.dark .nav-item:hover {
+            background: rgba(167, 139, 250, 0.1);
+        }
+
+        html.dark .nav-item.active {
+            background: linear-gradient(135deg, #a78bfa 0%, #c084fc 100%);
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        html.dark .header-left h1 {
+            background: linear-gradient(135deg, #a78bfa 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .date-time {
+            color: var(--text-light);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        html.dark .theme-toggle:hover {
+            background: rgba(167, 139, 250, 0.1);
+            border-color: rgba(167, 139, 250, 0.3);
+        }
+
+        .theme-toggle-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .toggle-switch {
+            width: 36px;
+            height: 20px;
+            background-color: #ccc;
+            border-radius: 10px;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        html.dark .toggle-switch {
+            background-color: #667eea;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s ease;
+        }
+
+        html.dark .toggle-switch::after {
+            left: 18px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.4s ease;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            text-align: center;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(102, 126, 234, 0.4);
+        }
+
+        html.dark .metric-card:hover {
+            border-color: rgba(167, 139, 250, 0.4);
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 10px 0;
+        }
+
+        html.dark .metric-value {
+            background: linear-gradient(135deg, #a78bfa 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .card {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.4s ease;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(102, 126, 234, 0.4);
+        }
+
+        html.dark .card:hover {
+            border-color: rgba(167, 139, 250, 0.4);
+        }
+
+        .card h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .summary-item {
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        html.dark .summary-item {
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.1) 0%, rgba(192, 132, 252, 0.1) 100%);
+            border-left-color: #a78bfa;
+        }
+
+        .summary-label {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .summary-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 350px;
+        }
+
+        .trend-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .trend-table th {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            padding: 12px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        html.dark .trend-table th {
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.1) 0%, rgba(192, 132, 252, 0.1) 100%);
+        }
+
+        .trend-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .trend-table tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        html.dark .trend-table tr:hover {
+            background: rgba(167, 139, 250, 0.05);
+        }
+
+        @media (max-width: 1024px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-top {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-menu {
+                padding: 8px 10px;
+            }
+
+            .nav-item {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 메뉴 -->
+    <nav class="nav-menu">
+        <a href="dashboard.html" class="nav-item" data-page="dashboard">📊 대시보드</a>
+        <a href="meeting-result.html" class="nav-item" data-page="meeting">📋 회의록</a>
+        <a href="chart.html" class="nav-item" data-page="chart">📈 매출 현황</a>
+        <a href="diagram.html" class="nav-item" data-page="diagram">🔄 업무 프로세스</a>
+        <a href="report.html" class="nav-item" data-page="report">📑 사이트 분석</a>
+        <a href="spreadsheet-report.html" class="nav-item active" data-page="spreadsheet">📊 판매 데이터</a>
+    </nav>
+
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <div class="header-left">
+                    <h1>판매 데이터 분석 보고서</h1>
+                    <p class="date-time" id="dateTime">2026년 4월 9일</p>
+                </div>
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <span class="theme-toggle-label">다크 모드</span>
+                    <div class="toggle-switch"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 주요 지표 카드 -->
+        <section class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">총 매출액</div>
+                <div class="metric-value">67,567,000</div>
+                <div class="metric-label">KRW</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">평균 거래액</div>
+                <div class="metric-value">2,252,233</div>
+                <div class="metric-label">KRW</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">총 판매량</div>
+                <div class="metric-value">1,450</div>
+                <div class="metric-label">개</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">거래 건수</div>
+                <div class="metric-value">30</div>
+                <div class="metric-label">건</div>
+            </div>
+        </section>
+
+        <!-- 데이터 요약 섹션 -->
+        <section class="card">
+            <h2>📊 데이터 요약</h2>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-label">분석 기간</div>
+                    <div class="summary-value">2026-01-05 ~ 2026-02-10</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">거래 건수</div>
+                    <div class="summary-value">30건</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">주요 제품</div>
+                    <div class="summary-value">에어팟, 블루투스 스피커</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">주요 지역</div>
+                    <div class="summary-value">서울</div>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 30px;">카테고리별 거래</h2>
+            <table class="trend-table">
+                <thead>
+                    <tr>
+                        <th>카테고리</th>
+                        <th>거래 건수</th>
+                        <th>비율</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>전자제품</td>
+                        <td>20건</td>
+                        <td>66.7%</td>
+                    </tr>
+                    <tr>
+                        <td>생활용품</td>
+                        <td>10건</td>
+                        <td>33.3%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 style="margin-top: 30px;">거래액 범위</h2>
+            <table class="trend-table">
+                <thead>
+                    <tr>
+                        <th>항목</th>
+                        <th>제품명</th>
+                        <th>거래액</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>최고 거래</td>
+                        <td>에어팟</td>
+                        <td>6,230,000 KRW</td>
+                    </tr>
+                    <tr>
+                        <td>최저 거래</td>
+                        <td>블루투스 스피커</td>
+                        <td>1,800,000 KRW</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 트렌드 분석 섹션 -->
+        <section class="card">
+            <h2>📈 트렌드 분석</h2>
+            <div class="charts-grid">
+                <div>
+                    <h3 style="font-size: 16px; margin-bottom: 15px; color: var(--text-primary);">월별 매출 비교</h3>
+                    <div class="chart-container">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="font-size: 16px; margin-bottom: 15px; color: var(--text-primary);">카테고리별 매출</h3>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 30px;">제품별 판매액 순위</h2>
+            <table class="trend-table">
+                <thead>
+                    <tr>
+                        <th>순위</th>
+                        <th>제품명</th>
+                        <th>판매액</th>
+                        <th>판매량</th>
+                        <th>비율</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>에어팟</td>
+                        <td>18,690,000 KRW</td>
+                        <td>300개</td>
+                        <td>27.6%</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>블루투스 스피커</td>
+                        <td>16,200,000 KRW</td>
+                        <td>400개</td>
+                        <td>24.0%</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>휴대폰 거치대</td>
+                        <td>10,150,000 KRW</td>
+                        <td>350개</td>
+                        <td>15.0%</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>USB 허브</td>
+                        <td>11,527,000 KRW</td>
+                        <td>400개</td>
+                        <td>17.1%</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>기타 제품</td>
+                        <td>11,000,000 KRW</td>
+                        <td>600개</td>
+                        <td>16.3%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 style="margin-top: 30px;">지역별 매출 분포</h2>
+            <table class="trend-table">
+                <thead>
+                    <tr>
+                        <th>지역</th>
+                        <th>거래 건수</th>
+                        <th>매출액</th>
+                        <th>평균 거래액</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>서울</td>
+                        <td>25건</td>
+                        <td>56,700,000 KRW</td>
+                        <td>2,268,000 KRW</td>
+                    </tr>
+                    <tr>
+                        <td>경기도</td>
+                        <td>4건</td>
+                        <td>8,400,000 KRW</td>
+                        <td>2,100,000 KRW</td>
+                    </tr>
+                    <tr>
+                        <td>기타 지역</td>
+                        <td>1건</td>
+                        <td>2,467,000 KRW</td>
+                        <td>2,467,000 KRW</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 추가 차트 섹션 -->
+        <section class="card">
+            <h2>📊 상세 분석</h2>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+                <div>
+                    <h3 style="font-size: 16px; margin-bottom: 15px; color: var(--text-primary);">제품별 판매 비율</h3>
+                    <div class="chart-container">
+                        <canvas id="productChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 다크 모드 토글
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        }
+
+        // 저장된 테마 불러오기
+        window.addEventListener('load', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+        });
+
+        // 현재 날짜 표시
+        function updateDateTime() {
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            const today = new Date(2026, 3, 9);
+            document.getElementById('dateTime').textContent = today.toLocaleDateString('ko-KR', options);
+        }
+        updateDateTime();
+
+        // Chart.js 설정
+        const chartConfig = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                        font: {
+                            size: 12,
+                            weight: '600'
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: {
+                        color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
+                    },
+                    grid: {
+                        color: getComputedStyle(document.documentElement).getPropertyValue('--border-color')
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
+                    },
+                    grid: {
+                        color: getComputedStyle(document.documentElement).getPropertyValue('--border-color')
+                    }
+                }
+            }
+        };
+
+        // 월별 매출 비교 차트
+        const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+        new Chart(monthlyCtx, {
+            type: 'line',
+            data: {
+                labels: ['1월 1주', '1월 2주', '1월 3주', '1월 4주', '2월 1주', '2월 2주'],
+                datasets: [{
+                    label: '주별 매출',
+                    data: [11200000, 10800000, 12100000, 11900000, 10800000, 10767000],
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#667eea',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                ...chartConfig,
+                plugins: {
+                    ...chartConfig.plugins,
+                    filler: {
+                        propagate: true
+                    }
+                }
+            }
+        });
+
+        // 카테고리별 매출 차트
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(categoryCtx, {
+            type: 'bar',
+            data: {
+                labels: ['전자제품', '생활용품'],
+                datasets: [{
+                    label: '매출액 (KRW)',
+                    data: [45100000, 22467000],
+                    backgroundColor: [
+                        'rgba(102, 126, 234, 0.8)',
+                        'rgba(118, 75, 162, 0.8)'
+                    ],
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: chartConfig
+        });
+
+        // 제품별 판매 비율 차트
+        const productCtx = document.getElementById('productChart').getContext('2d');
+        new Chart(productCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['에어팟', '블루투스 스피커', '휴대폰 거치대', 'USB 허브', '기타'],
+                datasets: [{
+                    data: [27.6, 24.0, 15.0, 17.1, 16.3],
+                    backgroundColor: [
+                        '#667eea',
+                        '#764ba2',
+                        '#f093fb',
+                        '#4facfe',
+                        '#00f2fe'
+                    ],
+                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-primary'),
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                ...chartConfig,
+                plugins: {
+                    ...chartConfig.plugins,
+                    legend: {
+                        ...chartConfig.plugins.legend,
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // 다크 모드 변경 시 차트 다시 그리기
+        const observer = new MutationObserver(() => {
+            setTimeout(() => {
+                location.reload();
+            }, 100);
+        });
+
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    </script>
+</body>
+</html>
