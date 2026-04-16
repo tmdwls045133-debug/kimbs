@@ -95,6 +95,26 @@
             padding-top: 70px;
         }
 
+        .nav-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            z-index: 1001;
+        }
+
+        .nav-toggle:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
         .nav-item {
             padding: 10px 18px;
             border-radius: 8px;
@@ -107,6 +127,9 @@
             border: none;
             transition: all 0.3s ease;
             white-space: nowrap;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
         }
 
         .nav-item:hover {
@@ -584,6 +607,28 @@
         }
 
         /* ===== 전체 화면 레이아웃 ===== */
+
+        /* 태블릿 (1200px 이하) */
+        @media (max-width: 1199px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            .nav-item {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+
+            .card {
+                padding: 24px;
+            }
+
+            .header-left h1 {
+                font-size: 28px;
+            }
+        }
+
+        /* 스몰 모바일 (768px - 1199px) */
         @media (max-width: 1024px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
@@ -603,35 +648,232 @@
             }
         }
 
-        @media (max-width: 768px) {
+        /* 모바일 (768px 이하) */
+        @media (max-width: 767px) {
+            body {
+                padding: 70px 12px 20px 12px;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .nav-menu {
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding: 12px 50px 12px 12px;
+                gap: 4px;
+            }
+
+            .nav-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .nav-item {
+                padding: 8px 12px;
+                font-size: 11px;
+                flex-shrink: 0;
+                min-height: 40px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
             .revenue-grid {
                 grid-template-columns: 1fr;
             }
 
-            .schedule-table {
-                font-size: 12px;
+            .card {
+                padding: 18px;
+                border-radius: 12px;
             }
 
-            .schedule-table td,
-            .schedule-table th {
-                padding: 8px;
+            .card h2 {
+                font-size: 16px;
+                margin-bottom: 14px;
             }
 
             header {
                 flex-direction: column;
                 gap: 12px;
+                margin-bottom: 20px;
             }
 
             .header-left h1 {
                 font-size: 24px;
+                margin-bottom: 4px;
             }
 
-            .card {
-                padding: 20px;
+            .date-time {
+                font-size: 12px;
+            }
+
+            .theme-toggle {
+                align-self: flex-start;
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            /* 테이블 반응형 */
+            .schedule-table {
+                font-size: 11px;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .schedule-table th {
+                padding: 10px 6px;
+                font-size: 10px;
+            }
+
+            .schedule-table td {
+                padding: 8px 6px;
+                font-size: 11px;
+            }
+
+            .day-label {
+                min-width: 30px;
+                font-size: 11px;
+            }
+
+            .time {
+                font-size: 10px;
+            }
+
+            /* Todo 항목 */
+            .todo-item {
+                padding: 10px;
+                gap: 8px;
+            }
+
+            .todo-item input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                min-width: 18px;
+            }
+
+            .todo-text {
+                font-size: 12px;
+                margin-bottom: 2px;
+            }
+
+            .todo-meta {
+                font-size: 10px;
+            }
+
+            .priority-badge {
+                padding: 3px 6px;
+                font-size: 10px;
+                margin-right: 6px;
+            }
+
+            .status-badge {
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+
+            /* 프로젝트 항목 */
+            .project-item {
+                padding: 12px;
+            }
+
+            .project-name {
+                font-size: 12px;
+            }
+
+            .project-percent {
+                font-size: 12px;
+            }
+
+            .project-info {
+                font-size: 10px;
+                gap: 8px;
+            }
+
+            /* 수익 카드 */
+            .revenue-card {
+                padding: 16px;
+                border-radius: 12px;
+            }
+
+            .revenue-label {
+                font-size: 11px;
+                margin-bottom: 6px;
             }
 
             .revenue-value {
                 font-size: 24px;
+                margin-bottom: 4px;
+            }
+
+            .revenue-unit {
+                font-size: 10px;
+            }
+        }
+
+        /* 극소 모바일 (480px 이하) */
+        @media (max-width: 479px) {
+            body {
+                padding: 65px 8px 16px 8px;
+            }
+
+            .nav-menu {
+                padding: 10px 45px 10px 8px;
+                gap: 2px;
+            }
+
+            .nav-toggle {
+                top: 8px;
+                right: 8px;
+                font-size: 20px;
+                padding: 6px;
+            }
+
+            .card {
+                padding: 14px;
+                border-radius: 10px;
+            }
+
+            .card h2 {
+                font-size: 14px;
+                margin-bottom: 12px;
+            }
+
+            .header-left h1 {
+                font-size: 20px;
+            }
+
+            .nav-item {
+                padding: 6px 10px;
+                font-size: 10px;
+            }
+
+            .todo-item {
+                padding: 8px;
+            }
+
+            .priority-badge,
+            .status-badge {
+                padding: 2px 4px;
+                font-size: 9px;
+            }
+
+            .project-item {
+                padding: 10px;
+            }
+
+            .revenue-card {
+                padding: 12px;
+            }
+
+            .revenue-value {
+                font-size: 20px;
             }
         }
     </style>
@@ -654,7 +896,8 @@
             </div>
 
             <!-- 내비게이션 메뉴 -->
-            <nav class="nav-menu">
+            <button class="nav-toggle" id="navToggle" aria-label="메뉴">☰</button>
+            <nav class="nav-menu" id="navMenu">
                 <a href="index.html" class="nav-item active" data-page="dashboard">📊 대시보드</a>
                 <a href="meeting-result.html" class="nav-item" data-page="meeting">📋 회의록</a>
                 <a href="chart.html" class="nav-item" data-page="chart">📈 매출 현황</a>
@@ -1078,6 +1321,52 @@
                 }
             });
         });
+
+        // ===== 모바일 네비게이션 토글 =====
+        const navToggle = document.getElementById('navToggle');
+        const navMenu = document.getElementById('navMenu');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        // 햄버거 메뉴 클릭
+        if (navToggle) {
+            navToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+            });
+        }
+
+        // 네비게이션 항목 클릭 시 메뉴 닫기 (모바일)
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 767) {
+                    navMenu.classList.remove('active');
+                }
+            });
+        });
+
+        // 윈도우 리사이즈 시 메뉴 상태 초기화
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 767) {
+                navMenu.classList.remove('active');
+            }
+        });
+
+        // 화면 크기 변경에 따른 토글 버튼 표시/숨김
+        function updateNavToggleVisibility() {
+            if (navToggle) {
+                if (window.innerWidth <= 767) {
+                    navToggle.style.display = 'flex';
+                } else {
+                    navToggle.style.display = 'none';
+                    navMenu.classList.remove('active');
+                }
+            }
+        }
+
+        // 초기 로드 시 확인
+        updateNavToggleVisibility();
+
+        // 리사이즈 이벤트에서도 확인
+        window.addEventListener('resize', updateNavToggleVisibility);
 
         // ===== PWA Service Worker 등록 =====
         if ('serviceWorker' in navigator) {
