@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>김비서 업무 대시보드</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="프리미엄 업무 관리 대시보드 - 할 일, 일정, 매출 분석을 한곳에서">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="김비서">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23667eea' width='180' height='180'/><text x='50%' y='50%' font-size='90' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='central'>📊</text></svg>">
     <style>
         * {
             margin: 0;
@@ -1070,6 +1077,50 @@
                     this.parentElement.querySelector('.todo-text').style.textDecoration = 'none';
                 }
             });
+        });
+
+        // ===== PWA Service Worker 등록 =====
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker 등록 완료:', registration);
+                    })
+                    .catch((error) => {
+                        console.warn('❌ Service Worker 등록 실패:', error);
+                    });
+            });
+
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshing) return;
+                refreshing = true;
+                window.location.reload();
+            });
+        }
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            console.log('📱 앱 설치 프롬프트 준비 완료');
+        });
+
+        window.installApp = function() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('✅ 사용자가 앱 설치 수락');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        };
+
+        window.addEventListener('appinstalled', () => {
+            console.log('✅ 김비서 앱 설치 완료');
+            deferredPrompt = null;
         });
     </script>
 </body>

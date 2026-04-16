@@ -19,7 +19,8 @@
       "Bash(ls -d */)",
       "Bash(chmod +x \"/c/Users/user/Desktop/워크숍-실습/.claude/skills/deploy/scripts/deploy.sh\")",
       "Bash(bash \"/c/Users/user/Desktop/워크숍-실습/.claude/skills/deploy/scripts/deploy.sh\" .)",
-      "Bash(bash \"/c/Users/user/Desktop/워크숍-실습/.claude/skills/deploy/scripts/deploy.sh\" \"/c/Users/user/Desktop/워크숍-실습\")"
+      "Bash(bash \"/c/Users/user/Desktop/워크숍-실습/.claude/skills/deploy/scripts/deploy.sh\" \"/c/Users/user/Desktop/워크숍-실습\")",
+      "Bash(bash .claude/skills/deploy/scripts/deploy.sh)"
     ]
   }
 }
