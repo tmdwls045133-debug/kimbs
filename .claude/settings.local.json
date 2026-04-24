@@ -20,7 +20,13 @@
       "Bash(chmod +x \"/c/Users/user/Desktop/워크숍-실습/.claude/skills/deploy/scripts/deploy.sh\")",
       "Bash(bash \"/c/Users/user/Desktop/워크숍-실습/.claude/skills/deploy/scripts/deploy.sh\" .)",
       "Bash(bash \"/c/Users/user/Desktop/워크숍-실습/.claude/skills/deploy/scripts/deploy.sh\" \"/c/Users/user/Desktop/워크숍-실습\")",
-      "Bash(bash .claude/skills/deploy/scripts/deploy.sh)"
+      "Bash(bash .claude/skills/deploy/scripts/deploy.sh)",
+      "Read(//c/Users/user/Desktop/**)",
+      "Bash(npx create-next-app@latest:*)",
+      "Bash(npm --version)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git add:*)"
     ]
   }
 }
