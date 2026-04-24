@@ -26,7 +26,19 @@
       "Bash(npm --version)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(powershell -Command \"Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force; iwr -useb https://get.scoop.sh | iex\")",
+      "Bash(curl -o /c/Users/user/Downloads/node-install.msi \"https://nodejs.org/dist/v20.11.1/node-v20.11.1-x64.msi\")",
+      "Bash(msiexec /i /c/Users/user/Downloads/node-install.msi /quiet /norestart)",
+      "Bash(cmd /c \"cd /d C:\\\\Users\\\\user\\\\Downloads && node-install.msi /quiet /norestart\")",
+      "Bash(msiexec.exe /i node-install.msi /qn /norestart /L*V \"C:\\\\Users\\\\user\\\\Downloads\\\\node-install.log\")",
+      "Bash(curl -o /c/Users/user/Downloads/node-portable.zip \"https://nodejs.org/dist/v20.11.1/node-v20.11.1-win-x64.zip\")",
+      "Bash(unzip -q node-portable.zip)",
+      "Bash(mv node-v20.11.1-win-x64 nodejs)",
+      "Bash(export PATH=\"/c/Users/user/Downloads/nodejs:$PATH\")",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(netstat -ano)"
     ]
   }
 }
