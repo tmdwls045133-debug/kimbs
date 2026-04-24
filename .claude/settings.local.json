@@ -38,7 +38,9 @@
       "Bash(export PATH=\"/c/Users/user/Downloads/nodejs:$PATH\")",
       "Bash(npm install:*)",
       "Bash(npm run:*)",
-      "Bash(netstat -ano)"
+      "Bash(netstat -ano)",
+      "Bash(awk '{print $2}')",
+      "Bash(xargs kill:*)"
     ]
   }
 }
